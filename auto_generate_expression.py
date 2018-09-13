@@ -58,7 +58,7 @@ class Constants:
     VIRGULE = '/'
     SINGLE_QUOTE = "'"
     LEFT_PARENTHESES = '('
-    RIGHT_PARENTHESES = '('
+    RIGHT_PARENTHESES = ')'
 
     def __init__(self):
         pass
