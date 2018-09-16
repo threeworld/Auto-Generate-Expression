@@ -3,7 +3,7 @@
 import random
 from fractions import Fraction
 
-from Constants import Constants
+from expression import Expression
 
 class Config:
     """
@@ -32,22 +32,63 @@ class Generator:
             config: config类
         :return: 
         """
-        pass
+        print("********** start generate expression **********")
+        exp_num = config.numofexp
+        exp_list = []
+
+        for i in range(exp_num):
+            random_num_operation = random.randint(1, config.max_num_of_oper)
+            mark_fraction = 0
+            if config.has_fraction:
+                mark_fraction = random.randint(0, random_num_operation+1)*2
+
+            number_of_oprand = random_num_operation + 1 #操作数比操作符的数目多1
+            exp = []
+            for j in range(random_num_operation + number_of_oprand):
+                if j % 2 == 0:
+                    if j == mark_fraction and config.has_fraction:
+                        exp.append(self.generate_Operand(config.has_fraction, config.num_range))
+                    else:
+                        exp.append(self.generate_Operand(config.has_fraction, config.num_range))
+                    if j > 1 and exp[j-1] == '÷' and exp[j] == '0':
+                        while True:
+                            exp[j-1] = self.generate_operation()
+                            if exp [j-1] == '÷':
+                                continue
+                            else:
+                                break
+                else:
+                    exp.append(self.generate_operation())
+            
+            #判断是否要括号
+            if config.has_parentheses and number_of_oprand > 2:
+                expression = " ".join(self.generate_parentheses(exp, number_of_oprand))
+            else:
+                expression = " ".join(exp)
+            
+            #判断是否有重复
+            if self.repeat_main(set, expression):
+                i = i - 1
+                continue
+            else:
+                exp_object = Expression(expression)
+                exp_list.append(exp_object)
+
 
     def generate_parentheses(self, exp, number_of_oprand):
         """
         生成括号表达式
         :param
             exp: 表达式
-            number_of_oprand: 操作的数目
+            number_of_oprand: 运算符数目
         :return: 括号表达式
         """
         expression = []
         num = number_of_oprand
         if exp:
             exp_length = len(exp)
-            left_position = random.randint(0,(num/2))
-            right_position = random.randint(left_position+1, (num/2)+1)
+            left_position = random.randint(0,int(num/2))
+            right_position = random.randint(left_position+1, int(num/2)+1)
             mark = -1
             for i in range(exp_length):
                 if self.is_operation(exp[i]):
@@ -55,11 +96,11 @@ class Generator:
                 else:
                     mark += 1
                     if mark == left_position:
-                        expression.append(Constants.LEFT_PARENTHESES)
+                        expression.append('(')
                         expression.append(exp[i])
                     elif mark == right_position:
                         expression.append(exp[i])
-                        expression.append(Constants.RIGHT_PARENTHESES)
+                        expression.append(')')
                     else:
                         expression.append(exp[i])
         #如果生成的括号表达式形如 (1 + 2/3 + 3) 则重新生成
@@ -102,7 +143,7 @@ class Generator:
         :param: None
         :return: + - x ÷
         """
-        operators = [Constants.PLUS, Constants.MINUS, Constants.MULTIPLY, Constants.DIVIDE]
+        operators = ['+', '-', 'x', '÷']
         return operators[random.randint(0,len(operators) - 1)]
     
     def is_operation(self, item):
@@ -119,6 +160,28 @@ class Generator:
             '÷': True
         }.get(item, False)
 
+    def repeat_main(self, express_set, expression):
+        """
+        判断重复主函数
+        :param
+            express_set: 表达式集合
+            expression: 生成的表达式
+        :return: True or False
+        """
+        for item in express_set:
+            if self.is_repeat(item, expression):
+                return True
+        return False
+    
+    def is_repeat(self, expression1, expression2):
+        """
+        判重辅助函数
+        :param 
+            expression1: 表达式1
+            expression2: 表达式2
+        :return: True or False
+        """
+        pass
 
 def main():
     """
