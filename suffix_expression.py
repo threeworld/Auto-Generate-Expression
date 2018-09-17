@@ -17,7 +17,7 @@ def to_suffix(exp):
     suffix_stack = []  #后缀表达式结果
     ops_stack = []  #操作符栈
     infix = exp.split(' ')
-    print(infix)
+    #print(infix)
     for item in infix:
         if item in ['+', '-', 'x', '÷']: #遇到运算符
             while len(ops_stack) >= 0:
@@ -64,7 +64,7 @@ def suffix_to_value(exp):
             stack_value.append(result)
         else:
             stack_value.append(int(item))
-        print(stack_value)
+
     return stack_value[0]
 
 def cal(n1, n2, op):
