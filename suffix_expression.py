@@ -1,5 +1,7 @@
 # -*- coding = utf-8 -*-
 
+from fractions import Fraction
+
 def to_suffix(exp):
     """
     中缀表达式转为后缀表达式
@@ -63,7 +65,20 @@ def suffix_to_value(exp):
             result = cal(n1, n2, item)
             stack_value.append(result)
         else:
-            stack_value.append(int(item))
+            if item.find('/') > 0:
+                attach = 0
+                right = ""
+                if item.find("'") > 0:
+                    parts = item.split("'")
+                    attach = int(parts[0])
+                    right = parts[1]
+                else:
+                    right = item
+                parts = right.split('/')
+                result = Fraction(attach * int(parts[1]) + int(parts[0]), int(parts[1]))
+                stack_value.append(result)
+            else:
+                stack_value.append(Fraction(int(item),1))    
 
     return stack_value[0]
 
@@ -79,7 +94,8 @@ def cal(n1, n2, op):
 
 
 if __name__ == '__main__':
-    exp = '9 + ( 3 - 1 ) x 3 + 10 ÷ 2'
+    exp = "( 4 x 8 ) x 1'7/9"
+    exp1 = '1/6 + 1/8'
     re = to_suffix(exp)
     print(re)
     print(suffix_to_value(re))

@@ -1,5 +1,6 @@
 # -*- coding=utf-8 -*-
 
+import operator
 import suffix_expression
 
 class Node:
@@ -37,11 +38,32 @@ def tree_is_same(root):
     """
     判断二叉树是否相同
     """
-    pass
+    if not root.left:
+        if not root.right:
+            return root.value
+    elif root.value == '+' or root.value == 'x':
+        left = tree_is_same(root.left)
+        right = tree_is_same(root.right)
+        if operator.le(left, right):
+            #print(root.value + left + right)
+            return root.value + left + right
+        else:
+            return root.value + right + left
+    else:
+        return root.value + tree_is_same(root.left) + tree_is_same(root.right) 
 
 if __name__ == '__main__':
-    exp = '9 + ( 3 - 1 ) x 3 + 10 ÷ 2'
-    re = suffix_expression.to_suffix(exp)
-    #print(re)
-    res = generate_binary_tree(re)
-    print(res.value)
+    exp1 = '3 + ( 2 ÷ 1 )'
+    exp2 = '1 + 2 + 3'
+    re1 = suffix_expression.to_suffix(exp1)
+    re2 = suffix_expression.to_suffix(exp2)
+    print(re1)
+    print(re2)
+    res1 = generate_binary_tree(re1)
+    res2 = generate_binary_tree(re2)
+    r1 = tree_is_same(res1) 
+    r2 = tree_is_same(res2)
+    print(r1)
+    print(r2)
+    if r1 == r2:
+        print("12")
