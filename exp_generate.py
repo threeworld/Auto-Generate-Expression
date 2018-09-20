@@ -3,29 +3,25 @@
 import random
 from fractions import Fraction
 from random import randint
+import argparse
+
 from suffix_expression import suffix_to_value,to_suffix
 from remove_duplicate import generate_binary_tree,tree_is_same
+from answer import expression_result
 
 class Config:
     """
     配置参数类
     """
-    def __init__(self, exp_num=10, num_range=10, has_fraction=False, has_mul_div= True, max_num_of_oper=3, has_parentheses=False, has_neg=False):
-        self.exp_num = exp_num   #
-        self.num_range = num_range
-        self.has_fraction = has_fraction
-        self.has_mul_div = has_mul_div
+    def __init__(self, exp_num=10, num_range=10, max_num_of_oper=3):
+        self.exp_num = exp_num   #生成表达式的数目
+        self.num_range = num_range  #操作数的范围
         self.max_num_of_oper = max_num_of_oper
-        self.has_parentheses = has_parentheses
-        self.has_neg = has_neg
 
 class Generator:
     """
     表达式生成类
     """
-    def __init__(self):
-        pass
-
     def generate(self, config):
         """
         表达式生成主函数
@@ -33,12 +29,12 @@ class Generator:
             config: config类
         :return: 
         """
-        print("********** start generate expression **********")
         exp_num = config.exp_num
         exp_list = []
 
         for i in range(exp_num):
             random_num_operation = randint(1, config.max_num_of_oper)
+            is_need_parenteses = randint(0,1)
             number_of_oprand = random_num_operation + 1 #操作数比操作符的数目多1
             exp = []
             for j in range(random_num_operation + number_of_oprand):
@@ -53,16 +49,17 @@ class Generator:
                             else:
                                 break
                 else:
+                    #生成运算符
                     exp.append(self.generate_operation())
             
             #判断是否要括号
-            if config.has_parentheses and number_of_oprand != 2:
+            if is_need_parenteses and number_of_oprand != 2:
                 expression = " ".join(self.generate_parentheses(exp, number_of_oprand))
             else:
                 expression = " ".join(exp)
             
             #判断是否有重复
-            if self.repeat_main(exp_list, expression):
+            if self.is_repeat(exp_list, expression):
                 i = i - 1
                 continue
             else:
@@ -144,47 +141,46 @@ class Generator:
         operators = ['+', '-', 'x', '÷']
         return operators[randint(0,len(operators) - 1)]
 
-    def repeat_main(self, express_set, expression):
+    def is_repeat(self, express_set, expression):
         """
-        判断重复主函数
+        判断重复方法
         :param
             express_set: 表达式集合
             expression: 生成的表达式
         :return: True or False
         """
+        target_exp_suffix = to_suffix(expression)
+        target_exp_binary_tree = generate_binary_tree(target_exp_suffix)
         for item in express_set:
-            if self.is_repeat(item, expression):
+            source_exp_suffix = to_suffix(item)
+            source_exp_binary_tree = generate_binary_tree(source_exp_suffix)
+            if tree_is_same(target_exp_binary_tree) == tree_is_same(source_exp_binary_tree):
                 return True
         return False
-    
-    def is_repeat(self, exp1, exp2):
+
+    def normalize_exp(self, exp_list):
         """
-        判重辅助函数
-        :param 
-            expression1: 表达式1
-            expression2: 表达式2
-        :return: True or False
+        规范化输出表达式
+        :param exp_list: 表达式列表
+        :return 
         """
-        #生成后缀表达式
-        target_exp_suffix = to_suffix(exp2)
-        source_exp_suffix = to_suffix(exp1)
-        target_exp_binary_tree = generate_binary_tree(target_exp_suffix)
-        source_exp_binary_tree = generate_binary_tree(source_exp_suffix)
-        
-        if tree_is_same(target_exp_binary_tree) == tree_is_same(source_exp_binary_tree):
-            return True
-        else:
-            return False
+        if not exp_list:
+            return 
+        for i, exp in enumerate(exp_list):
+            exp_str = str(i+1) + ': '+ exp +' = '+"\n"
+            with open('Exercises.txt', "a+",encoding='utf-8') as f:
+                f.write(exp_str)
 
 def main():
     """
     主函数
     """
-    config = Config(has_parentheses=True,has_fraction=True)
+    config = Config(exp_num=100)
     generator = Generator()
     res_list = generator.generate(config)
-    for exp in res_list:
-        with open('expression.txt', 'a+',encoding = 'utf-8') as f:
-            f.write(exp)
+    generator.normalize_exp(res_list)
+    expression_result(res_list)
+
+
 if __name__ == '__main__':
     main()
