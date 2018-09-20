@@ -63,6 +63,9 @@ def suffix_to_value(exp):
             n2 = stack_value.pop()
             n1 = stack_value.pop()
             result = cal(n1, n2, item)
+            #求值过程中出现负数和n/0这个情况去除
+            if result < 0  or result == False:
+                return False
             stack_value.append(result)
         else:
             if item.find('/') > 0:
@@ -90,6 +93,8 @@ def cal(n1, n2, op):
     if op == 'x':
         return n1 * n2
     if op == '÷':
+        if n2 == 0:
+            return False
         return n1 / n2
 
 
