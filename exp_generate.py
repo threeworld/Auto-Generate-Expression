@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import random
 from fractions import Fraction
 from random import randint
-import argparse
 
 from suffix_expression import suffix_to_value,to_suffix
 from remove_duplicate import generate_binary_tree,tree_is_same
-from answer import expression_result
 
 class Config:
     """
@@ -16,7 +13,7 @@ class Config:
     def __init__(self, exp_num=10, num_range=10, max_num_of_oper=3):
         self.exp_num = exp_num   #生成表达式的数目
         self.num_range = num_range  #操作数的范围
-        self.max_num_of_oper = max_num_of_oper
+        self.max_num_of_oper = max_num_of_oper #最大的运算符数
 
 class Generator:
     """
@@ -171,36 +168,5 @@ class Generator:
             with open('Exercises.txt', "a+",encoding='utf-8') as f:
                 f.write(exp_str)
 
-def main():
-    """
-    主函数
-    """
-    parser = argparse.ArgumentParser(description="***** this is auto-generate-expression *****")
-    parser.add_argument("-n", metavar = "--number", dest = "expnum_arg", help = "Generate a given number of expressions" )
-    parser.add_argument("-r", metavar = "--range", dest = "range_arg", help = "Specify the range of operands")
-    parser.add_argument("-e", metavar = "--exercise file", dest = "exercise_arg", help = "Given four arithmetic problem files")
-    parser.add_argument("-a", metavar = "--answer file", dest = "answer_arg", help = "Given four arithmetic problem answer files")
-    args = parser.parse_args()
-    
-    #判断生成的表达式的数目
-    if args.expnum_arg:
-        #表达式的范围
-        if args.range_arg:
-            config = Config(exp_num=int(args.expnum_arg),num_range=int(args.range_arg))
-        else:
-            config = Config(exp_num=int(args.expnum_arg))
-        generator = Generator()
-        res_list = generator.generate(config)
-        generator.normalize_exp(res_list)
-        expression_result(res_list)
-    
-    #练习题答案的文件判断
-    if args.exercise_arg:
-        if args.answer_arg:
-            pass
-        else:
-            print('please give an answer files')
-            exit(0)
-
 if __name__ == '__main__':
-    main()
+    pass
