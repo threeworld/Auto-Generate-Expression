@@ -1,6 +1,7 @@
 # -*- coding = 'utf-8 -*-
 
 import argparse
+
 from exp_generate import Config,Generator
 from answer import expression_result,check_answer
 
@@ -22,10 +23,12 @@ def main():
             config = Config(exp_num=int(args.expnum_arg),num_range=int(args.range_arg))
         else:
             config = Config(exp_num=int(args.expnum_arg))
+        print('***** 正在生成 *****')
         generator = Generator()
         res_list = generator.generate(config)
         generator.normalize_exp(res_list)
         expression_result(res_list)
+        print('***** 生成完成 *****')
     
     #练习题答案的文件判断
     if args.exercise_arg:

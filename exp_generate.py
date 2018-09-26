@@ -56,11 +56,12 @@ class Generator:
                 expression = " ".join(exp)
             
             #判断是否有重复
-            if self.is_repeat(exp_list, expression) or suffix_to_value(to_suffix(expression)) == False:
-                continue
-            else:
-                exp_list.append(expression)
-                i = i + 1
+            #if self.is_repeat(exp_list, expression) or suffix_to_value(to_suffix(expression)) == False:
+            #    continue
+            #else:
+            exp_list.append(expression)
+            print('第 %d 道题' % int(i+1))
+            i = i + 1
 
         return exp_list
 
